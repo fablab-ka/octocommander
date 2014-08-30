@@ -1,0 +1,18 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="OctoCommander.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="Printers" Type="System.String" Scope="User">
+      <Value Profile="(Default)">bregen.fritz.box</Value>
+    </Setting>
+    <Setting Name="PrinterAPIKeys" Type="System.String" Scope="User">
+      <Value Profile="(Default)">D7DBAFBFBEBB41658F4FDE82E61679FF</Value>
+    </Setting>
+    <Setting Name="UriFormat" Type="System.String" Scope="User">
+      <Value Profile="(Default)">http://{0}/api/{1}?apikey={2}</Value>
+    </Setting>
+    <Setting Name="PrinterRefreshInterval" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">5000</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
