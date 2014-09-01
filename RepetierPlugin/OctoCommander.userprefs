@@ -1,0 +1,15 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Deploy Locally" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="OctoCommander/Printer.cs">
+    <Files>
+      <File FileName="OctoCommander/FabLabPrinter.cs" Line="81" Column="46" />
+      <File FileName="OctoCommander/Printer.cs" Line="63" Column="18" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore>
+      <Catchpoint exceptionName="System.Exception" />
+    </BreakpointStore>
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>

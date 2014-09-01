@@ -52,26 +52,42 @@ namespace OctoCommander
             {
                 var wc = new WebClient();
                 var stateJson = await wc.DownloadStringTaskAsync(GetUri("state"));
+				dynamic state = Newtonsoft.Json.Linq.JObject.Parse(stateJson);
+				var hasError = false;
+                
+				if (state["state"] != null)
+				{
+					State = state["state"]["stateString"];
+	                IsPrinting = Convert.ToBoolean(state["state"]["flags"]["printing"]);
+	                IsPaused = Convert.ToBoolean(state["state"]["flags"]["paused"]);
+	                hasError = Convert.ToBoolean(state["state"]["flags"]["error"]);
+				}
 
-                var state = System.Web.Helpers.Json.Decode(stateJson);
-                State = state["state"]["stateString"];
-                IsPrinting = Convert.ToBoolean(state["state"]["flags"]["printing"]);
-                IsPaused = Convert.ToBoolean(state["state"]["flags"]["paused"]);
-                var hasError = Convert.ToBoolean(state["state"]["flags"]["error"]);
-                CurrentBedTemperature = state["temperatures"]["bed"]["current"].ToString();
-                TargetBedTemperature = state["temperatures"]["bed"]["target"].ToString();
-                CurrentExtruderTemperature = state["temperatures"]["extruder"]["current"].ToString();
-                TargetExtruderTemperature = state["temperatures"]["extruder"]["target"].ToString();
-                PrintTimeLeft = state["progress"]["printTimeLeft"];
-                if (state["progress"]["progress"] != null)
-                {
-                    Progress = (int)state["progress"]["progress"];
-                }
-                else
-                {
-                    Progress = null;
-                }
-                CurrentJob = state["job"]["filename"];
+				if (state["temperatures"] != null)
+				{
+	                CurrentBedTemperature = state["temperatures"]["bed"]["current"].ToString();
+	                TargetBedTemperature = state["temperatures"]["bed"]["target"].ToString();
+	                CurrentExtruderTemperature = state["temperatures"]["extruder"]["current"].ToString();
+	                TargetExtruderTemperature = state["temperatures"]["extruder"]["target"].ToString();
+				}
+
+				if (state["progress"] != null)
+				{
+	                PrintTimeLeft = state["progress"]["printTimeLeft"];
+	                if (state["progress"]["progress"] != null)
+	                {
+	                    Progress = (int)state["progress"]["progress"];
+	                }
+	                else
+	                {
+	                    Progress = null;
+	                }
+				}
+
+				if (state["job"] != null)
+				{
+                	CurrentJob = state["job"]["filename"];
+				}
 
                 Error = hasError ? "The Printer has an Error." : "-";
                 IsConnected = true;
@@ -79,7 +95,6 @@ namespace OctoCommander
             catch (Exception)
             {
                 Error = "Failed to load State";
-                throw;
             }
         }
 
@@ -95,7 +110,6 @@ namespace OctoCommander
                 var wc = new WebClient();
                 var response = await wc.UploadFileTaskAsync(address, "POST", filepath);
                 
-
                 Error = "-";
             }
             catch (Exception)
