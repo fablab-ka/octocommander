@@ -71,15 +71,19 @@ namespace OctoCommander
 
         private void connectButton_Click(object sender, EventArgs e)
         {
-            //PrinterControlBox.Text = printerSelectionBox.SelectedText;
             var printer = printerSelectionBox.SelectedItem as Printer;
 
             if (printer != null)
             {
+                host.LogInfo("Trying to connect to " + printer);
                 currentPrinter = printer;
 
                 Task.Run(() => RefreshPrinter());
                 refreshTimer.Start();
+            }
+            else
+            {
+                host.LogWarning("No printer selected, can't connect");
             }
         }
 
@@ -87,9 +91,14 @@ namespace OctoCommander
         {
             if (currentPrinter != null)
             {
-                await currentPrinter.Refresh();
-
+                await currentPrinter.Refresh(host);
+                
                 Invoke((Action) UpdatePrinterData);
+
+                if (!currentPrinter.IsConnected)
+                {
+                    refreshTimer.Stop();
+                }
             }
         }
 
@@ -113,7 +122,7 @@ namespace OctoCommander
                 progressText.Text = currentPrinter.PrintTimeLeft + " some unit";
                 if (currentPrinter.Progress.HasValue && currentPrinter.IsPrinting)
                 {
-                    jobProgressBar.Value = currentPrinter.Progress.Value; // TODO
+                    jobProgressBar.Value = (int)currentPrinter.Progress.Value; // TODO
                     jobBox.Enabled = true;
                 }
                 else
@@ -131,6 +140,20 @@ namespace OctoCommander
 
             var name = Environment.MachineName + "_" + DateTime.Now.ToString("yyyy-MM-dd-H-mm-ss");
             Task.Run(() => currentPrinter.Print(gcode, name + ".gcode"));
+        }
+
+        private void openOctoPrintButton_Click(object sender, EventArgs e)
+        {
+            var printer = printerSelectionBox.SelectedItem as Printer;
+
+            if (printer != null)
+            {
+                host.OpenLink("http://" + printer.Address);
+            }
+            else
+            {
+                host.LogWarning("No printer selected, can't open OctoPrint");
+            }
         }
     }
 }

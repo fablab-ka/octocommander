@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.printerSelectionBox = new System.Windows.Forms.ComboBox();
-            this.connectButton = new System.Windows.Forms.Button();
+            this.openOctoPrintButton = new System.Windows.Forms.Button();
             this.printerControlBox = new System.Windows.Forms.GroupBox();
             this.pausedText = new System.Windows.Forms.Label();
             this.printingText = new System.Windows.Forms.Label();
@@ -56,6 +56,7 @@
             this.label9 = new System.Windows.Forms.Label();
             this.printBox = new System.Windows.Forms.GroupBox();
             this.printButton = new System.Windows.Forms.Button();
+            this.connectButton = new System.Windows.Forms.Button();
             this.printerControlBox.SuspendLayout();
             this.temperaturesBox.SuspendLayout();
             this.jobBox.SuspendLayout();
@@ -70,19 +71,19 @@
             this.printerSelectionBox.FormattingEnabled = true;
             this.printerSelectionBox.Location = new System.Drawing.Point(49, 10);
             this.printerSelectionBox.Name = "printerSelectionBox";
-            this.printerSelectionBox.Size = new System.Drawing.Size(267, 21);
+            this.printerSelectionBox.Size = new System.Drawing.Size(186, 21);
             this.printerSelectionBox.TabIndex = 0;
             // 
-            // connectButton
+            // openOctoPrintButton
             // 
-            this.connectButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.connectButton.Location = new System.Drawing.Point(322, 10);
-            this.connectButton.Name = "connectButton";
-            this.connectButton.Size = new System.Drawing.Size(75, 23);
-            this.connectButton.TabIndex = 1;
-            this.connectButton.Text = "Connect";
-            this.connectButton.UseVisualStyleBackColor = true;
-            this.connectButton.Click += new System.EventHandler(this.connectButton_Click);
+            this.openOctoPrintButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.openOctoPrintButton.Location = new System.Drawing.Point(322, 10);
+            this.openOctoPrintButton.Name = "openOctoPrintButton";
+            this.openOctoPrintButton.Size = new System.Drawing.Size(75, 23);
+            this.openOctoPrintButton.TabIndex = 1;
+            this.openOctoPrintButton.Text = "Octoprint";
+            this.openOctoPrintButton.UseVisualStyleBackColor = true;
+            this.openOctoPrintButton.Click += new System.EventHandler(this.openOctoPrintButton_Click);
             // 
             // printerControlBox
             // 
@@ -296,6 +297,7 @@
             this.jobProgressBar.Location = new System.Drawing.Point(66, 36);
             this.jobProgressBar.Name = "jobProgressBar";
             this.jobProgressBar.Size = new System.Drawing.Size(316, 20);
+            this.jobProgressBar.Step = 1;
             this.jobProgressBar.TabIndex = 14;
             // 
             // label4
@@ -359,16 +361,28 @@
             this.printButton.UseVisualStyleBackColor = true;
             this.printButton.Click += new System.EventHandler(this.printButton_Click);
             // 
+            // connectButton
+            // 
+            this.connectButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.connectButton.Location = new System.Drawing.Point(241, 10);
+            this.connectButton.Name = "connectButton";
+            this.connectButton.Size = new System.Drawing.Size(75, 23);
+            this.connectButton.TabIndex = 18;
+            this.connectButton.Text = "Connect";
+            this.connectButton.UseVisualStyleBackColor = true;
+            this.connectButton.Click += new System.EventHandler(this.connectButton_Click);
+            // 
             // FabLabPrinter
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.connectButton);
             this.Controls.Add(this.printBox);
             this.Controls.Add(this.jobBox);
             this.Controls.Add(this.temperaturesBox);
             this.Controls.Add(this.printerLabel);
             this.Controls.Add(this.printerControlBox);
-            this.Controls.Add(this.connectButton);
+            this.Controls.Add(this.openOctoPrintButton);
             this.Controls.Add(this.printerSelectionBox);
             this.Name = "FabLabPrinter";
             this.Size = new System.Drawing.Size(400, 524);
@@ -387,7 +401,7 @@
         #endregion
 
         private System.Windows.Forms.ComboBox printerSelectionBox;
-        private System.Windows.Forms.Button connectButton;
+        private System.Windows.Forms.Button openOctoPrintButton;
         private System.Windows.Forms.GroupBox printerControlBox;
         private System.Windows.Forms.Label printerLabel;
         private System.Windows.Forms.Label printerStateLabel;
@@ -414,6 +428,7 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.GroupBox printBox;
         private System.Windows.Forms.Button printButton;
+        private System.Windows.Forms.Button connectButton;
 
     }
 }

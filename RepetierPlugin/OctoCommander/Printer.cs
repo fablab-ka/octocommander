@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using OctoCommander.Properties;
+using RepetierHostExtender.interfaces;
 
 namespace OctoCommander
 {
@@ -23,7 +24,7 @@ namespace OctoCommander
 
         public string CurrentJob { get; set; }
 
-        public int? Progress { get; set; }
+        public float? Progress { get; set; }
 
         public string TargetExtruderTemperature { get; set; }
 
@@ -44,50 +45,25 @@ namespace OctoCommander
             return string.Format(Settings.Default.UriFormat, Address, part, APIKey);
         }
 
-        public async Task Refresh()
+        public async Task Refresh(IHost host)
         {
             IsConnected = false;
 
+            Reset();
+
             try
             {
-                var wc = new WebClient();
-                var stateJson = await wc.DownloadStringTaskAsync(GetUri("state"));
-				dynamic state = Newtonsoft.Json.Linq.JObject.Parse(stateJson);
-				var hasError = false;
-                
-				if (state["state"] != null)
-				{
-					State = state["state"]["stateString"];
-	                IsPrinting = Convert.ToBoolean(state["state"]["flags"]["printing"]);
-	                IsPaused = Convert.ToBoolean(state["state"]["flags"]["paused"]);
-	                hasError = Convert.ToBoolean(state["state"]["flags"]["error"]);
-				}
+                var hasError = false;
 
-				if (state["temperatures"] != null)
-				{
-	                CurrentBedTemperature = state["temperatures"]["bed"]["current"].ToString();
-	                TargetBedTemperature = state["temperatures"]["bed"]["target"].ToString();
-	                CurrentExtruderTemperature = state["temperatures"]["extruder"]["current"].ToString();
-	                TargetExtruderTemperature = state["temperatures"]["extruder"]["target"].ToString();
-				}
-
-				if (state["progress"] != null)
-				{
-	                PrintTimeLeft = state["progress"]["printTimeLeft"];
-	                if (state["progress"]["progress"] != null)
-	                {
-	                    Progress = (int)state["progress"]["progress"];
-	                }
-	                else
-	                {
-	                    Progress = null;
-	                }
-				}
-
-				if (state["job"] != null)
-				{
-                	CurrentJob = state["job"]["filename"];
-				}
+                hasError = await LoadVersion();
+                if (!hasError)
+                {
+                    hasError = await LoadConnection();
+                }
+                if (!hasError)
+                {
+                    hasError = await LoadState();
+                }
 
                 Error = hasError ? "The Printer has an Error." : "-";
                 IsConnected = true;
@@ -95,7 +71,100 @@ namespace OctoCommander
             catch (Exception)
             {
                 Error = "Failed to load State";
+                host.LogError("Failed to connect to printer");
             }
+        }
+
+        private async Task<bool> LoadVersion()
+        {
+            var hasError = false;
+
+            var wc = new WebClient();
+            var versionJson = await wc.DownloadStringTaskAsync(GetUri("version"));
+            dynamic version = Newtonsoft.Json.Linq.JObject.Parse(versionJson);
+
+            return hasError;
+        }
+
+        private async Task<bool> LoadConnection()
+        {
+            var hasError = false;
+
+            var wc = new WebClient();
+            var connectionJson = await wc.DownloadStringTaskAsync(GetUri("connection"));
+            dynamic connection = Newtonsoft.Json.Linq.JObject.Parse(connectionJson);
+
+            return hasError;
+        }
+
+        private async Task<bool> LoadState()
+        {
+            var hasError = false;
+
+            var wc = new WebClient();
+            var stateJson = await wc.DownloadStringTaskAsync(GetUri("state"));
+            dynamic state = Newtonsoft.Json.Linq.JObject.Parse(stateJson);
+
+            if (state["state"] != null)
+            {
+                State = state["state"]["stateString"];
+                if (state["state"]["flags"] != null)
+                {
+                    IsPrinting = Convert.ToBoolean(state["state"]["flags"]["printing"]);
+                    IsPaused = Convert.ToBoolean(state["state"]["flags"]["paused"]);
+                    hasError = Convert.ToBoolean(state["state"]["flags"]["error"]);
+                }
+            }
+
+            if (state["temperatures"] != null)
+            {
+                if (state["temperatures"]["bed"] != null)
+                {
+                    CurrentBedTemperature = (string) state["temperatures"]["bed"]["current"];
+                    TargetBedTemperature = (string) state["temperatures"]["bed"]["target"];
+                }
+
+                if (state["temperatures"]["extruder"] != null)
+                {
+                    CurrentExtruderTemperature = (string) state["temperatures"]["extruder"]["current"];
+                    TargetExtruderTemperature = (string) state["temperatures"]["extruder"]["target"];
+                }
+            }
+
+            if (state["progress"] != null)
+            {
+                PrintTimeLeft = state["progress"]["printTimeLeft"];
+                if (state["progress"]["completion"] != null)
+                {
+                    Progress = (float) state["progress"]["completion"];
+                }
+                else
+                {
+                    Progress = null;
+                }
+            }
+
+            if (state["job"] != null)
+            {
+                CurrentJob = state["job"]["filename"];
+            }
+
+            return hasError;
+        }
+
+        private void Reset()
+        {
+            Error = "-";
+            State = string.Empty;
+            IsPrinting = false;
+            IsPaused = false;
+            CurrentBedTemperature = string.Empty;
+            TargetBedTemperature = string.Empty;
+            CurrentExtruderTemperature = string.Empty;
+            TargetExtruderTemperature = string.Empty;
+            PrintTimeLeft = string.Empty;
+            Progress = null;
+            CurrentJob = string.Empty;
         }
 
         public async Task Print(string gcode, string filename)

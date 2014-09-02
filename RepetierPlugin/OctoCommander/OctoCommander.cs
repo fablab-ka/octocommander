@@ -27,7 +27,7 @@ namespace OctoCommander
             host.RegisterHostComponent(cool);
 
             // Add some text in the about dialog
-            host.AboutDialog.RegisterThirdParty("DemoPlugin", "\r\n\r\nDemoPlugin written by Repetier\r\nUse it like you want.");
+            host.AboutDialog.RegisterThirdParty("OctoCommander", "\r\n\r\nOctoCommander written by FabLab\r\nUse it like you want.");
         }
 
         /// <summary>
